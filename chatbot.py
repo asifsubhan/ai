@@ -10,6 +10,7 @@ from agents import (
 from typing import cast
 from rich import print
 import json
+from datetime import datetime
 
 @cl.on_chat_start
 async def start():
@@ -68,6 +69,14 @@ async def main(message: cl.Message):
 
         print(f"Error updating message: {e}")
 
+
+@cl.on_chat_end
+async def save_history():
+    history = cl.user_session.get("history", [])
+    timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
+    with open(f"chat_history_{timestamp}.json", "w") as f:
+        json.dump(history, f, indent=2)
+                  
 @cl.on_chat_end
 async def end():
     history = cl.user_session.get("history") or []
